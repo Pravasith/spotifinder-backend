@@ -3,8 +3,8 @@ Configures GraphQL schemas and resolvers for our Spotifinder app, aggregates API
 
 # Install dependencies
 
-***USING YARN***
+***USING YARN: ***
 yarn install
 
-***USING NPM***
+***USING NPM: ***
 npm install
