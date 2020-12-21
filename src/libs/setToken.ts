@@ -1,21 +1,23 @@
-import { fetchOptions, fetchData } from './../libs/hitAPIs';
+import { fetchData, fetchOptions } from './hitAPIs'
 import configs from '../configs'
 
-const { accessToken } = configs.spotify
+const encodedSecret = configs.spotify.encodedID_Secret
 
 
 
-const url = 'https://api.spotify.com/v1/search?q=roadhouse%20blues&type=album,track&limit=3'
+const url = 'https://accounts.spotify.com/api/token'
 const options: fetchOptions = {
-    method: 'get',
+    method: 'post',
+    body: 'grant_type=client_credentials',
     headers: { 
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer ' + accessToken
+        'Authorization': 'Basic ' + encodedSecret
     },
 }
 
 
-export const searchData = <T>(): Promise<T> => {
+
+export const accessTokenData = <T>(): Promise<T> => {
     return new Promise((resolve, reject) => {
         fetchData(url, options)
         .then(data => resolve(data as Promise<T>))
@@ -26,4 +28,3 @@ export const searchData = <T>(): Promise<T> => {
 
     })
 }
-
