@@ -31,7 +31,7 @@ const TrackType = new GraphQLObjectType({
         name: {
             type: GraphQLString,
             resolve: json => {
-                console.log(json.tracks.items)
+                console.log(json.tracks)
                 return json.tracks.items.uri
             }
         },
