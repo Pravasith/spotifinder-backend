@@ -1,7 +1,7 @@
 
 import { fetchOptions, fetchData } from './../libs/hitAPIs'
 import configs from '../configs'
-import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql'
+import { GraphQLID, GraphQLInt, GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql'
 
 const { accessToken } = configs.spotify
 
@@ -28,14 +28,11 @@ const TrackType = new GraphQLObjectType({
     description: '...',
 
     fields: () => ({
-        name: {
-            type: GraphQLString,
-            resolve: json => {
-                console.log(json.tracks)
-                return json.tracks.items.uri
-            }
-        },
-        
+        name: { type: GraphQLString },
+        popularity: { type: GraphQLInt },
+        preview_url: { type: GraphQLString },
+        duration_ms: { type: GraphQLInt },
+        id: { type: GraphQLID }
     })
 })
 
@@ -53,8 +50,8 @@ export default new GraphQLSchema({
                         type: GraphQLString
                     }
                 },
-                resolve: (root, args) => {
-                    const url = `https://api.spotify.com/v1/search?q=${ args.name }&type=track&limit=3`
+                resolve: async (root, args) => {
+                    const url = `https://api.spotify.com/v1/search?q=${ args.name }&type=track,artist&limit=3`
                     const options: fetchOptions = {
                         method: 'get',
                         headers: { 
@@ -63,9 +60,13 @@ export default new GraphQLSchema({
                         },
                     }
 
-                    root
-                    return searchData(url, options)
+                    const data: any = await searchData(url, options)
 
+                    // let { items } = data.tracks
+                    console.log(data)
+                    // let {}
+                    root
+                    return data.tracks.items[0]
 
                 }
             }
