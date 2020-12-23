@@ -125,6 +125,7 @@ export default new GraphQLSchema({
 
                     const data: any = await searchData(url, options)
 
+
                     let tracks = data.tracks.items
 
                     tracks = tracks.map((item: any) => {
@@ -169,6 +170,8 @@ export default new GraphQLSchema({
                         }
                         
                     })
+
+                    console.log(tracks)
 
                     root
                     return [tracks]
