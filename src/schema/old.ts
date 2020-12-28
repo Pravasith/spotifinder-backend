@@ -1,5 +1,5 @@
 
-import { fetchOptions, fetchData } from './../libs/hitAPIs'
+import { fetchOptions, fetchData } from '../libs/hitAPIs'
 import configs from '../configs'
 import { 
     GraphQLID, 

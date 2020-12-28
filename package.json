@@ -12,10 +12,13 @@
     "build": "tsc -p ."
   },
   "dependencies": {
+    "apollo-server-express": "^2.19.1",
+    "class-validator": "^0.12.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-graphql": "^0.12.0",
     "graphql": "^15.4.0",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
   }
 }
