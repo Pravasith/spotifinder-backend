@@ -19,7 +19,7 @@ export class SearchType {
     // @Field(() => Album)
     // album: Album
 
-    @Field()
+    @Field(() => String, { nullable: true })
     preview_url: string
 
     @Field()
