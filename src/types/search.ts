@@ -1,24 +1,42 @@
-// import { Image } from './image';
-import { Field, ID, Int, ObjectType } from "type-graphql";
+
+import { Image } from './image';
+import { Field, ID, Int, ObjectType } from "type-graphql"
 
 
 
-// type Album = {
-//     name: string,
-//     id: string,
-//     images: Image[],
-//     uri: string,
-//     href: string
-// }
 
 @ObjectType()
-export class SearchType {
+export class AlbumType {
 
     // Required
+    @Field()
+    name: string
 
-    // @Field(() => Album)
-    // album: Album
+    @Field()
+    id: string
 
+    @Field(() => [Image])
+    images: Image[]
+
+
+    // Optional
+    @Field(() => [String])
+    artistNames: string[]
+
+    @Field()
+    uri: string
+
+    @Field()
+    href: string
+
+
+}
+
+
+@ObjectType()
+export class TrackType {
+
+    // Required
     @Field(() => String, { nullable: true })
     preview_url: string
 
@@ -28,8 +46,14 @@ export class SearchType {
     @Field(() => ID) // type = graphqlID
     id: string
 
+    @Field(() => [Image])
+    images: Image[]
+
+    // @Field(() => [String])
+    // albumNames: string[]
+
     @Field(() => [String])
-    artists: string[]
+    artistNames: string[]
 
 
     // Optional
@@ -50,5 +74,56 @@ export class SearchType {
 
     @Field()
     href: string
+
+}
+
+@ObjectType()
+export class ArtistType {
+
+
+    // Required
+    @Field(() => ID)
+    id: string
+
+    @Field()
+    name: string
+
+    @Field(() => Int)
+    followers: number
+
+    @Field(() => [Image])
+    images: Image[]
+
+
+    // Optional
+    @Field(() => Int)
+    popularity: number
+
+    @Field()
+    type: string
+
+    @Field()
+    uri: string
+
+    @Field()
+    href: string
+
+    @Field(() => [String])
+    genres: string[]
+    
+}
+
+
+@ObjectType()
+export class SearchType {
+
+    @Field(() => [AlbumType])
+    albums: AlbumType[]
+
+    @Field(() => [ArtistType])
+    artists: ArtistType[]
+
+    @Field(() => [TrackType])
+    tracks: TrackType[]
 
 }

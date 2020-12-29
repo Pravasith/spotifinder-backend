@@ -1,27 +1,15 @@
+
 import configs from '../configs'
 
 import { fetchData, fetchOptions } from './../libs/hitAPIs'
 import { accessTokenData } from './../libs/setToken'
 
 import { SearchType } from './../types/search'
-import { Args, ArgsType, Field, Query, Resolver } from "type-graphql"
+import { Args, Query, Resolver } from "type-graphql"
+import { GetSearchArgs } from './../args/search'
 
 
 
-enum SearchFilters {
-    track = 'track',
-    artist = 'artist',
-    album = 'album'
-}
-
-@ArgsType()
-class GetSearchArgs {
-    @Field()
-    searchQuery: string
-
-    @Field(() => [String])
-    searchFilter: SearchFilters[]
-}
 
 
 
@@ -29,7 +17,7 @@ export const searchData = <T>(url: string, options: fetchOptions): Promise<T> =>
     return new Promise((resolve, reject) => {
         fetchData(url, options)
         .then(async data => {
-            if(!!((data as T & { error: Object, x: Object }).error)){
+            if(!!((data as T & { error: Object }).error)){
                 // Checking if data threw an error, usually access Token expiry
                 const newAccessToken: { access_token: string } = await accessTokenData() // gets new access token
 
@@ -46,11 +34,10 @@ export const searchData = <T>(url: string, options: fetchOptions): Promise<T> =>
                 }
 
                 // console.log({
-                //     "old": configs.spotify.accessToken,
                 //     "new": newAccessToken.access_token
                 // })
 
-                // console.log({newOptions})
+                console.log("New Token generated")
 
                 searchData(url, newOptions)
                 .then((data) => { resolve(<T>data) })
@@ -74,11 +61,10 @@ export const searchData = <T>(url: string, options: fetchOptions): Promise<T> =>
 @Resolver()
 export class SearchResolver {
 
-    @Query(() => [SearchType])
+    @Query(() => SearchType)
     async search (
-        @Args()
-        { searchQuery, searchFilter }: GetSearchArgs
-    ): Promise<SearchType[]> {
+        @Args() { searchQuery, searchFilter }: GetSearchArgs
+    ): Promise<SearchType> {
 
         const accessToken = configs.spotify.getAccessToken()
 
@@ -94,56 +80,39 @@ export class SearchResolver {
         }
 
         const data: any = await searchData(url, options)
+        const { albums, artists, tracks } = data // Spotify data structure
 
-        // console.log(data.albums.items[0])
 
-        let tracks = data.tracks.items
+        const refinedData = {
+            albums: albums.items.map((item: any) => {
+                const { name, id, images, artists, uri, href } = item
+                return {
+                    name, id, images, uri, href,
+                    artistNames: artists.map((artist: { name: string }) => artist.name), 
+                }
+            }),
 
-        tracks = tracks.map((item: any) => {
+            artists: artists.items.map((item: any) => {
+                const { id, name, followers, images, popularity, type, uri, href, genres } = item
+                return { id, name, followers, images, popularity, type, uri, href, genres }
+            }),
 
-            const {
-                album,
-                preview_url,
-                name,
-                id,
-                artists,
-                popularity,
-                type,
-                available_markets,
-                duration_ms,
-                uri,
-                href,
-            } = item
+            tracks: tracks.items.map((item: any) => {
+                const { 
+                    preview_url, name, id, artists, album, popularity,
+                    type, available_markets, duration_ms, uri, href,
+                } = item
 
-            return {
-                album: {
-                    // Mandatory
-                    name: album.name,
-                    id: album.id,
-                    images: album.images,
+                return {
+                    preview_url, name, id, popularity, type, 
+                    available_markets, duration_ms, uri, href,
+                    artistNames: artists.map((artist: { name: string }) => artist.name),
+                    images: album.images
+                }
+            }),
+        }
 
-                    // Optional
-                    uri: album.uri,
-                    href: album.href,
-                },
-                preview_url,
-                name,
-                id,
-                artists: artists.map((artist: any) => artist.name),
-            
-                // Optional
-                popularity,
-                type,
-                available_markets,
-                duration_ms,
-                uri,
-                href,
-            }
-            
-        })
-
-        // console.log(tracks)
-        return tracks
+        return refinedData
     }
 
 }
