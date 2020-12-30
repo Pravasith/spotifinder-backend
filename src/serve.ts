@@ -2,10 +2,12 @@ import 'reflect-metadata'
 
 import * as Express from 'express'
 import { ApolloServer } from 'apollo-server-express'
+
 import { Arg, buildSchema, Field, ObjectType, Query, Resolver } from 'type-graphql'
 
-// import { accessTokenData } from './libs/setToken'
+
 import { SearchResolver } from './resolvers/search'
+import compression = require('compression')
 
 
 
@@ -46,8 +48,7 @@ const main = async () => {
 
     const app = Express(), PORT = 4000
 
-    // console.log(await accessTokenData() ) // Do this to get it when token and cookie expire
-
+    app.use(compression())
     apolloServer.applyMiddleware({app})
     
 
