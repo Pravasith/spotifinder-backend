@@ -10,41 +10,63 @@ import { GetSearchArgs } from './../args/search'
 
 
 
-
+let maxTries: number = 0
 
 
 export const searchData = <T>(url: string, options: fetchOptions): Promise<T> => {
     return new Promise((resolve, reject) => {
         fetchData(url, options)
         .then(async data => {
-            if(!!((data as T & { error: Object }).error)){
-                // Checking if data threw an error, usually access Token expiry
+
+            if(!!((data as { error: { status: number } }).error.status === 401)){
+                // Checking if data threw a 401 error, unauthorised. Probably access token expired
                 const newAccessToken: { access_token: string } = await accessTokenData() // gets new access token
 
                 // If so, set a new access token to configs and request data again
                 configs.spotify.setAccessToken(newAccessToken.access_token)
                 
 
-                const newOptions = {
-                    ...options,
-                    headers: {
-                        ...options.headers,
-                        'Authorization': 'Bearer ' + configs.spotify.getAccessToken()
-                    }
-                }
+                // const newOptions = {
+                //     ...options,
+                //     headers: {
+                //         ...options.headers,
+                //         'Authorization': 'Bearer ' + configs.spotify.getAccessToken()
+                //     }
+                // }
 
                 // console.log({
                 //     "new": newAccessToken.access_token
                 // })
 
+                console.log(data)
+
                 console.log("New Token generated")
 
-                searchData(url, newOptions)
-                .then((data) => { resolve(<T>data) })
-                .catch(e => {
-                    console.log(e)
-                    reject({ error: true, details : e })
-                })
+                // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
+                // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
+
+                if(maxTries < 5){
+                    maxTries++
+                    // await searchData(url, newOptions)
+                    await searchData(url, options)
+                    .then((data) => { resolve(<T>data) })
+                    .catch(e => {
+                        console.log(e)
+                        reject({ error: true, details : e })
+                    })
+
+                    
+                    console.log({maxTries})
+                }
+
+                else{
+                    reject({ error: true, details : "Max tries exceeded, and boo-hoo you are not authorized b*tch" })
+                }
+                
+
+                // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
+                // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
+
             }
 
             else resolve(<T>data) // Could also be written as -> resolve(data as T)
