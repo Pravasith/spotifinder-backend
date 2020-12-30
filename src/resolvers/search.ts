@@ -26,19 +26,19 @@ export const searchData = <T>(url: string, options: fetchOptions): Promise<T> =>
                 configs.spotify.setAccessToken(newAccessToken.access_token)
                 
 
-                // const newOptions = {
-                //     ...options,
-                //     headers: {
-                //         ...options.headers,
-                //         'Authorization': 'Bearer ' + configs.spotify.getAccessToken()
-                //     }
-                // }
+                const newOptions = {
+                    ...options,
+                    headers: {
+                        ...options.headers,
+                        'Authorization': 'Bearer ' + configs.spotify.getAccessToken()
+                    }
+                }
 
                 // console.log({
                 //     "new": newAccessToken.access_token
                 // })
 
-                console.log(data)
+                // console.log(data)
 
                 console.log("New Token generated")
 
@@ -47,8 +47,7 @@ export const searchData = <T>(url: string, options: fetchOptions): Promise<T> =>
 
                 if(maxTries < 5){
                     maxTries++
-                    // await searchData(url, newOptions)
-                    await searchData(url, options)
+                    await searchData(url, newOptions)
                     .then((data) => { resolve(<T>data) })
                     .catch(e => {
                         console.log(e)
@@ -56,7 +55,7 @@ export const searchData = <T>(url: string, options: fetchOptions): Promise<T> =>
                     })
 
                     
-                    console.log({maxTries})
+                    // console.log({maxTries})
                 }
 
                 else{
