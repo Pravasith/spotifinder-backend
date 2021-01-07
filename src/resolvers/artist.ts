@@ -1,3 +1,4 @@
+import { TrackType } from './../types/track'
 import { AlbumType } from './../types/album'
 
 import { Arg, FieldResolver, Query, Resolver, Root } from "type-graphql"
@@ -6,7 +7,7 @@ import { checkForTokenAndHitAPI } from './checkForTokenAndHitAPI'
 import { fetchOptions } from './../libs/hitAPIs'
 import configs from '../configs'
 
-// import { GetArtist } from './../args/artist'
+
 import { ArtistType } from './../types/artist'
 
 
@@ -90,9 +91,44 @@ export class ArtistResolver {
             return temp
         })
 
+        return refinedData
+    }
 
 
-        
+    @FieldResolver(() => [TrackType])
+    async popularTracks(
+        @Root() 
+        artist: ArtistType,
+
+        @Arg('country', { defaultValue: 'US' })
+        country: string
+    ) {
+
+        const url = `https://api.spotify.com/v1/artists/${ artist.id }/top-tracks?country=${ country }`
+
+
+        const accessToken = configs.spotify.getAccessToken()
+
+        const options: fetchOptions = {
+            method: 'get',
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        }
+
+        const data: any = await checkForTokenAndHitAPI(url, options)
+        // console.log(data)
+
+        const refinedData = data.tracks.map((item: any) => {
+            const { preview_url, name, id, images, artists, popularity, type, available_markets, duration_ms, uri, href } = item
+            const temp: TrackType = { 
+                preview_url, name, id, images, popularity, type, available_markets, duration_ms, uri, href,
+                artistNames: artists.map((item: { name: string }) => item.name)
+            }
+
+            return temp
+        })
 
         return refinedData
     }
