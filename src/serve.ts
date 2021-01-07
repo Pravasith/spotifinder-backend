@@ -1,3 +1,4 @@
+
 import 'reflect-metadata'
 
 import * as Express from 'express'
@@ -7,6 +8,8 @@ import { Arg, buildSchema, Field, ObjectType, Query, Resolver } from 'type-graph
 
 
 import { SearchResolver } from './resolvers/search'
+import { ArtistResolver } from './resolvers/artist'
+
 import compression = require('compression')
 
 
@@ -40,7 +43,8 @@ const main = async () => {
     const schema = await buildSchema({
         resolvers: [
             HelloResolver,
-            SearchResolver
+            SearchResolver,
+            ArtistResolver
         ]
     })
 
