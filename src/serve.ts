@@ -1,4 +1,5 @@
 
+
 import 'reflect-metadata'
 
 import * as Express from 'express'
@@ -9,6 +10,7 @@ import { Arg, buildSchema, Field, ObjectType, Query, Resolver } from 'type-graph
 
 import { SearchResolver } from './resolvers/search'
 import { ArtistResolver } from './resolvers/artist'
+import { AlbumResolver } from './resolvers/album'
 
 import compression = require('compression')
 
@@ -44,7 +46,8 @@ const main = async () => {
         resolvers: [
             HelloResolver,
             SearchResolver,
-            ArtistResolver
+            ArtistResolver,
+            AlbumResolver
         ]
     })
 

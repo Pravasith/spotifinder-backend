@@ -56,6 +56,43 @@ export class ArtistResolver {
 
     }
 
+    @Query(() => [ArtistType])
+    async getRelatedArtists (
+        @Arg("artistId")
+        artistId : string
+    ) {
+
+        const url = `https://api.spotify.com/v1/artists/${ artistId }/related-artists`
+        
+
+        const accessToken = configs.spotify.getAccessToken()
+
+        const options: fetchOptions = {
+            method: 'get',
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        }
+
+        const data: any = await checkForTokenAndHitAPI(url, options)
+        // console.log(data)
+
+
+        const refinedData = data.artists.map((item: any) => {
+            const { id, name, images, popularity, type, uri, href, genres, followers } = item
+            const temp: ArtistType = {
+                id, name, images, popularity, type, uri, href, genres,
+                followers: followers.total
+            }
+
+            return temp
+        })
+
+        return refinedData
+
+    }
+
 
 
 
