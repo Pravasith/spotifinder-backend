@@ -1,3 +1,4 @@
+import { AlbumType } from './album'
 
 import { Image } from './image'
 import { Field, Int, ObjectType, ID } from 'type-graphql'
@@ -17,11 +18,11 @@ export class TrackType {
     @Field(() => ID) // type = graphqlID
     id: string
 
-    @Field(() => [Image])
+    @Field(() => [Image!]!)
     images: Image[]
 
-    // @Field(() => [String])
-    // albumNames: string[]
+    @Field(() => AlbumType)
+    album: AlbumType
 
     @Field(() => [String])
     artistNames: string[]
