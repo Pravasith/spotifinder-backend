@@ -42,10 +42,25 @@ export class AlbumResolver {
         const data: any = await checkForTokenAndHitAPI(url, options)
         // console.log(data)
 
-        const { name, id, images, artists, uri, href } = data
+        const { name, id, images, artists, uri, href, album_type, copyrights, release_date } = data
         const refinedData: AlbumType = {
-            id, name, images, uri, href,
-            artistNames: artists.map((item: { name: string }) => item.name)
+            id, name, images, uri, href, album_type, release_date, 
+            copyrights: 
+                !!copyrights 
+                ? 
+                copyrights[0].text
+                :
+                "None",
+            artistNames: artists.map((item: { name: string }) => item.name),
+            artists: artists.map((item: any) => {
+                return {
+                    name: item.name,
+                    href: item.href,
+                    id: item.id,
+                    type: item.type,
+                    uri: item.uri,
+                }
+            })
         }
 
 
@@ -75,13 +90,28 @@ export class AlbumResolver {
         }
 
         const data: any = await checkForTokenAndHitAPI(url, options)
-        // console.log(data)
+
 
         const refinedData = data.albums.map((item: any) => {
-            const { name, id, images, artists, uri, href } = item
+            const { name, id, images, artists, uri, href, album_type, copyrights, release_date } = item
             const temp: AlbumType = {
-                id, name, images, uri, href,
-                artistNames: artists.map((item: { name: string }) => item.name)
+                id, name, images, uri, href, album_type, release_date,
+                copyrights: 
+                    !!copyrights 
+                    ?
+                    copyrights[0].text
+                    :
+                    "None",
+                artistNames: artists.map((item: { name: string }) => item.name),
+                artists: artists.map((item: any) => {
+                    return {
+                        name: item.name,
+                        href: item.href,
+                        id: item.id,
+                        type: item.type,
+                        uri: item.uri,
+                    }
+                })
             }
 
             return temp
