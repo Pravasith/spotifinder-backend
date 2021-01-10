@@ -60,7 +60,7 @@ const main = async () => {
     
 
     app.listen(PORT, () => {
-        console.log(`Listening, go to http://localhost:${ PORT }/graphql`)
+        console.log(`Listening in Heroku, go to http://localhost:${ PORT }/graphql`)
     })
     
 }
