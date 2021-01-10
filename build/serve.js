@@ -9,17 +9,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require("express");
-const express_graphql_1 = require("express-graphql");
-const schema_1 = require("./schema");
+require("reflect-metadata");
+const Express = require("express");
+const apollo_server_express_1 = require("apollo-server-express");
+const type_graphql_1 = require("type-graphql");
+const search_1 = require("./resolvers/search");
+const artist_1 = require("./resolvers/artist");
+const album_1 = require("./resolvers/album");
+const compression = require("compression");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const app = express();
-    app.use('/graphql', express_graphql_1.graphqlHTTP({
-        schema: schema_1.default,
-        graphiql: true
-    }));
-    app.listen(4000, () => {
-        console.log('listening... ');
+    const schema = yield type_graphql_1.buildSchema({
+        resolvers: [
+            search_1.SearchResolver,
+            artist_1.ArtistResolver,
+            album_1.AlbumResolver
+        ]
+    });
+    const apolloServer = new apollo_server_express_1.ApolloServer({ schema });
+    const app = Express(), PORT = 4000;
+    app.use(compression());
+    apolloServer.applyMiddleware({ app });
+    app.listen(PORT, () => {
+        console.log(`Listening, go to http://localhost:${PORT}/graphql`);
     });
 });
 main();
