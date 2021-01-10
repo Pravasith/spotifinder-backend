@@ -29,8 +29,9 @@ import compression = require('compression')
 // }
 
 
-var corsOptions = {
-    origin: 'http://localhost:3000/',
+let corsOptions = {
+    origin: ['http://localhost:3000'],
+    
     credentials: true // <-- REQUIRED backend setting
 }
  
