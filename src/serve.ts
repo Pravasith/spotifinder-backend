@@ -31,7 +31,8 @@ import compression = require('compression')
 
 let corsOptions = {
     origin: 'http://localhost:3000',
-    credentials: true // <-- REQUIRED backend setting
+    credentials: true, // <-- REQUIRED backend setting
+    preflightContinue: true,
 }
  
 
