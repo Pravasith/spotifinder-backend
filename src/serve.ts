@@ -3,7 +3,7 @@
 import 'reflect-metadata'
 
 import * as Express from 'express'
-import * as cors from 'cors'
+// import * as cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
 
 import { buildSchema } from 'type-graphql'
@@ -32,7 +32,7 @@ import compression = require('compression')
 let corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true, // <-- REQUIRED backend setting
-    preflightContinue: true,
+    // preflightContinue: true,
 }
  
 
@@ -52,9 +52,12 @@ const main = async () => {
 
     const app = Express(), PORT = process.env.PORT || 4000
 
-    app.use(cors(corsOptions))
+    // app.use(cors(corsOptions))
     app.use(compression())
-    apolloServer.applyMiddleware({app})
+    apolloServer.applyMiddleware({
+        app,
+        cors: corsOptions
+    })
     
 
     app.listen(PORT, () => {
