@@ -10,7 +10,7 @@ import { Field, ID, Int, ObjectType } from 'type-graphql'
 export class ArtistType {
 
 
-    // Required
+    // Required //
     @Field(() => ID)
     id: string
 
