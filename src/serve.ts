@@ -3,6 +3,7 @@
 import 'reflect-metadata'
 
 import * as Express from 'express'
+import * as cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
 
 import { buildSchema } from 'type-graphql'
@@ -16,28 +17,17 @@ import compression = require('compression')
 
 
 
-// @ObjectType()
-// class Pravas {
-//     @Field()
-//     likes: string
-// }
-
-// // import schema from './schema/old'
-// @Resolver(Pravas)
-// class HelloResolver {
-//     @Query(() => [Pravas])
-//     async hello(
-//         @Arg('what', { defaultValue: 'Ice cream' })
-//         what: string
-//     ): Promise<Pravas[]>{
-//         return [
-//             {
-//                 likes: 'Pravas likes ' + what
-//             }
-//         ]
+// const whitelist = ['http://localhost:3000/', 'https://spotifinder-backend1.herokuapp.com/']
+// const corsOptions = {
+//   origin: function (origin: any, callback: any) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
 //     }
+//   }
 // }
-
+ 
 
 
 const main = async () => {
@@ -55,6 +45,7 @@ const main = async () => {
 
     const app = Express(), PORT = 4000
 
+    app.use('*', cors())
     app.use(compression())
     apolloServer.applyMiddleware({app})
     
