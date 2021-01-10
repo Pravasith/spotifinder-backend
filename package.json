@@ -24,6 +24,6 @@
     "type-graphql": "^1.1.1"
   },
   "engines": {
-    "node": "10.x"
+    "node": "12.13.0"
   }
 }
