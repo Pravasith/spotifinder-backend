@@ -27,6 +27,12 @@ import compression = require('compression')
 //     }
 //   }
 // }
+
+
+var corsOptions = {
+    origin: 'http://localhost:3000/',
+    credentials: true // <-- REQUIRED backend setting
+}
  
 
 
@@ -45,7 +51,7 @@ const main = async () => {
 
     const app = Express(), PORT = 4000
 
-    app.use('*', cors())
+    app.use('*', cors(corsOptions))
     app.use(compression())
     apolloServer.applyMiddleware({app})
     
