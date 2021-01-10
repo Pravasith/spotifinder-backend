@@ -38,12 +38,12 @@ const main = async () => {
 
 
     let corsOptions = {
-        origin: ['http://localhost:3000', 'https://spotifinder.vercel.app/'],
+        origin: ['http://localhost:3000', 'https://spotifinder.vercel.app'],
         credentials: true, // <-- REQUIRED backend setting
     }
 
     
-    
+    console.log(process.env.NODE_ENV)
 
     app.use(compression())
     apolloServer.applyMiddleware({
