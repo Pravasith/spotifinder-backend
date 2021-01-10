@@ -5,7 +5,7 @@ import 'reflect-metadata'
 import * as Express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 
-import { Arg, buildSchema, Field, ObjectType, Query, Resolver } from 'type-graphql'
+import { buildSchema } from 'type-graphql'
 
 
 import { SearchResolver } from './resolvers/search'
@@ -16,27 +16,27 @@ import compression = require('compression')
 
 
 
-@ObjectType()
-class Pravas {
-    @Field()
-    likes: string
-}
+// @ObjectType()
+// class Pravas {
+//     @Field()
+//     likes: string
+// }
 
-// import schema from './schema/old'
-@Resolver(Pravas)
-class HelloResolver {
-    @Query(() => [Pravas])
-    async hello(
-        @Arg('what', { defaultValue: 'Ice cream' })
-        what: string
-    ): Promise<Pravas[]>{
-        return [
-            {
-                likes: 'Pravas likes ' + what
-            }
-        ]
-    }
-}
+// // import schema from './schema/old'
+// @Resolver(Pravas)
+// class HelloResolver {
+//     @Query(() => [Pravas])
+//     async hello(
+//         @Arg('what', { defaultValue: 'Ice cream' })
+//         what: string
+//     ): Promise<Pravas[]>{
+//         return [
+//             {
+//                 likes: 'Pravas likes ' + what
+//             }
+//         ]
+//     }
+// }
 
 
 
@@ -44,7 +44,7 @@ const main = async () => {
 
     const schema = await buildSchema({
         resolvers: [
-            HelloResolver,
+            // HelloResolver,
             SearchResolver,
             ArtistResolver,
             AlbumResolver
