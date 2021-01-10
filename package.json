@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "nodemon -e ts,graphql --exec ts-node src/serve.ts --watch src",
-    "start": "ts-node build/serve.js",
+    "start": "node build/serve.js",
     "build": "tsc -p ."
   },
   "dependencies": {
