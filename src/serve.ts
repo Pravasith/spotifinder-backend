@@ -52,7 +52,7 @@ const main = async () => {
 
     const app = Express(), PORT = process.env.PORT || 4000
 
-    app.use('*', cors(corsOptions))
+    app.use(cors(corsOptions))
     app.use(compression())
     apolloServer.applyMiddleware({app})
     
