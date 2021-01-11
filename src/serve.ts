@@ -37,7 +37,7 @@ const main = async () => {
 
 
 
-    let corsOptions = {
+    const corsOptions = {
         // origin: ['http://localhost:3000', 'https://spotifinder.vercel.app'],
         origin: ['https://spotifinder.vercel.app'],
 
