@@ -16,7 +16,10 @@ const options = {
 const accessTokenData = () => {
     return new Promise((resolve, reject) => {
         hitAPIs_1.fetchData(url, options)
-            .then(data => resolve(data))
+            .then(data => {
+            console.log(data);
+            resolve(data);
+        })
             .catch(err => {
             console.error(err);
             reject(err);

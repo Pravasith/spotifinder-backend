@@ -40,6 +40,7 @@ let AlbumResolver = class AlbumResolver {
                 }
             };
             const data = yield checkForTokenAndHitAPI_1.checkForTokenAndHitAPI(url, options);
+            console.log("TRACK::::::::::" + data.name);
             const { name, id, images, artists, uri, href, album_type, copyrights, release_date } = data;
             const refinedData = {
                 id, name, images, uri, href, album_type, release_date,
@@ -101,7 +102,7 @@ let AlbumResolver = class AlbumResolver {
     }
     albumTracks(albumData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `https://api.spotify.com/v1/albums/${albumData.id}/tracks`;
+            const url = `https://api.spotify.com/v1/albums/${albumData.id}/tracks?offset=0&limit=10`;
             const accessToken = configs_1.default.spotify.getAccessToken();
             const options = {
                 method: 'get',

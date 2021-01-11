@@ -40,7 +40,7 @@ export class AlbumResolver {
         }
 
         const data: any = await checkForTokenAndHitAPI(url, options)
-        // console.log(data)
+        // console.log("TRACK::::::::::" + data.name)
 
         const { name, id, images, artists, uri, href, album_type, copyrights, release_date } = data
         const refinedData: AlbumType = {

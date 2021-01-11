@@ -102,7 +102,7 @@ export class ArtistResolver {
     async albums(@Root() artist: ArtistType) {
 
 
-        const url = `https://api.spotify.com/v1/artists/${ artist.id }/albums?offset=0&limit=8`
+        const url = `https://api.spotify.com/v1/artists/${ artist.id }/albums?offset=0&limit=10`
 
 
         const accessToken = configs.spotify.getAccessToken()
@@ -116,21 +116,29 @@ export class ArtistResolver {
         }
 
         const data: any = await checkForTokenAndHitAPI(url, options)
-        // console.log(data)
+        // console.log("ALBUMS::::::::::", data)
 
-        const refinedData = data.items.map((item: any) => {
-            const { name, id, images, artists, uri, href, album_type, copyrights, release_date } = item
+        const artistAlbumIds = data.items.map((item: { id: string }) => {
+            const { id } = item
 
-            // console.log(!!copyrights)
+            return id
+        })
+
+
+        // console.log(artistAlbumIds.join())
+
+        const url2 = `https://api.spotify.com/v1/albums/?ids=${ artistAlbumIds.join() }`
+
+        const newData: any = await checkForTokenAndHitAPI(url2, options)
+
+        const refinedData = newData.albums.map((item:any) => {
+            const { name, id, images, artists, uri, href, album_type, release_date, tracks } = item
+
+            // console.log(tracks)
 
             const temp: AlbumType = {
-                id, name, images, uri, href, album_type, release_date,
-                copyrights: 
-                    !!copyrights 
-                    ?
-                    copyrights[0].text
-                    :
-                    "None",
+                id, name, images, uri, href, album_type, release_date, 
+
                 artistNames: artists.map((item: { name: string }) => item.name),
                 artists: artists.map((item: any) => {
                     return {
@@ -140,7 +148,8 @@ export class ArtistResolver {
                         type: item.type,
                         uri: item.uri,
                     }
-                })
+                }),
+                tracks: tracks.items
             }
 
             return temp

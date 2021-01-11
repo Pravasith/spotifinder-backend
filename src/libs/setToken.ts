@@ -20,7 +20,11 @@ const options: fetchOptions = {
 export const accessTokenData = <T>(): Promise<T> => {
     return new Promise((resolve, reject) => {
         fetchData(url, options)
-        .then(data => resolve(data as Promise<T>))
+        .then(data => {
+
+            // console.log(data)
+            resolve(data as Promise<T>)
+        })
         .catch(err => {
             console.error(err)
             reject(err)

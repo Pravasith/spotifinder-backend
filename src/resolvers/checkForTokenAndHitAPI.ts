@@ -5,7 +5,7 @@ import { fetchData, fetchOptions } from './../libs/hitAPIs'
 import { accessTokenData } from './../libs/setToken'
 
 
-let noOfTries: number = 0
+// let noOfTries: number = 0
 
 export const checkForTokenAndHitAPI = <T>(url: string, options: fetchOptions): Promise<T> => {
     return new Promise((resolve, reject) => {
@@ -13,6 +13,8 @@ export const checkForTokenAndHitAPI = <T>(url: string, options: fetchOptions): P
         .then(async data => {
 
             // console.log(noOfTries)
+
+            // console.log(data)
 
             type DATA = {
                 error: { status: number } 
@@ -46,35 +48,48 @@ export const checkForTokenAndHitAPI = <T>(url: string, options: fetchOptions): P
                     // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
                     // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
 
-                    if(noOfTries < 2){
+                    // if(noOfTries < 2){
 
 
 
 
                         
-                        noOfTries++
-                        await checkForTokenAndHitAPI(url, newOptions)
-                        .then((data) => { resolve(<T>data) })
-                        .catch(e => {
-                            console.log(e)
-                            reject(e)
-                        })
+                    //     noOfTries++
+                    //     await checkForTokenAndHitAPI(url, newOptions)
+                    //     .then((data) => { resolve(<T>data) })
+                    //     .catch(e => {
+                    //         console.log(e)
+                    //         reject(e)
+                    //     })
     
                         
-                        // console.log({maxTries})
-                    }
+                    //     // console.log({maxTries})
+                    // }
     
-                    else{
-                        reject({ error: data, details : "Max tries exceeded, and boo hoo you are not authorized b*tch" })
-                    }
-                    
+                    // else{
+                    //     reject({ error: data, details : "Max tries exceeded, and boo hoo you are not authorized b*tch" })
+                    // }
+
+
+
+                    fetchData(url, newOptions)
+                    .then(data => {
+                        resolve(<T>data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        reject(error)
+                    })
+
     
                     // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
                     // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
     
                 }
 
-                else reject({ error: data, details : "Some error occured. But it's not 401: Unauthorised. Good luck figuring out." })
+                // else reject({ error: data, details : "Some error occured. But it's not 401: Unauthorised. Good luck figuring out." })
+                else reject((<DATA>data).error)
+
             }
 
 

@@ -1,3 +1,4 @@
+import { TrackType } from './track';
 import { ArtistType } from './artist';
 import { Image } from './image'
 import { Field, ObjectType } from 'type-graphql'
@@ -22,7 +23,7 @@ export class AlbumType {
     album_type: string
 
     @Field()
-    copyrights: string
+    copyrights?: string
 
     @Field()
     release_date: string
@@ -39,6 +40,9 @@ export class AlbumType {
 
     @Field()
     href: string
+
+    @Field(() => [TrackType])
+    tracks?: TrackType[]
 
 
 }

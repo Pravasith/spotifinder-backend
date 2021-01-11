@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const Express = require("express");
-const cors = require("cors");
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
 const search_1 = require("./resolvers/search");
@@ -27,10 +26,16 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         ]
     });
     const apolloServer = new apollo_server_express_1.ApolloServer({ schema });
-    const app = Express(), PORT = 4000;
-    app.use('*', cors());
+    const app = Express(), PORT = process.env.PORT || 4000;
+    let corsOptions = {
+        origin: ['http://localhost:3000', 'https://spotifinder.vercel.app'],
+        credentials: true,
+    };
     app.use(compression());
-    apolloServer.applyMiddleware({ app });
+    apolloServer.applyMiddleware({
+        app,
+        cors: corsOptions
+    });
     app.listen(PORT, () => {
         console.log(`Listening in Heroku, go to http://localhost:${PORT}/graphql`);
     });

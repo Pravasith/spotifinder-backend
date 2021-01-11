@@ -74,7 +74,7 @@ let ArtistResolver = class ArtistResolver {
     }
     albums(artist) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `https://api.spotify.com/v1/artists/${artist.id}/albums`;
+            const url = `https://api.spotify.com/v1/artists/${artist.id}/albums?offset=0&limit=8`;
             const accessToken = configs_1.default.spotify.getAccessToken();
             const options = {
                 method: 'get',
@@ -85,14 +85,9 @@ let ArtistResolver = class ArtistResolver {
             };
             const data = yield checkForTokenAndHitAPI_1.checkForTokenAndHitAPI(url, options);
             const refinedData = data.items.map((item) => {
-                const { name, id, images, artists, uri, href, album_type, copyrights, release_date } = item;
+                const { name, id, images, artists, uri, href, album_type, release_date } = item;
                 const temp = {
                     id, name, images, uri, href, album_type, release_date,
-                    copyrights: !!copyrights
-                        ?
-                            copyrights[0].text
-                        :
-                            "None",
                     artistNames: artists.map((item) => item.name),
                     artists: artists.map((item) => {
                         return {

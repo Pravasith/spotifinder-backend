@@ -13,7 +13,6 @@ exports.checkForTokenAndHitAPI = void 0;
 const configs_1 = require("../configs");
 const hitAPIs_1 = require("./../libs/hitAPIs");
 const setToken_1 = require("./../libs/setToken");
-let noOfTries = 0;
 const checkForTokenAndHitAPI = (url, options) => {
     return new Promise((resolve, reject) => {
         hitAPIs_1.fetchData(url, options)
@@ -27,21 +26,17 @@ const checkForTokenAndHitAPI = (url, options) => {
                         "new": newAccessToken.access_token
                     });
                     console.log("New Token generated");
-                    if (noOfTries < 2) {
-                        noOfTries++;
-                        yield exports.checkForTokenAndHitAPI(url, newOptions)
-                            .then((data) => { resolve(data); })
-                            .catch(e => {
-                            console.log(e);
-                            reject(e);
-                        });
-                    }
-                    else {
-                        reject({ error: true, details: "Max tries exceeded, and boo hoo you are not authorized b*tch" });
-                    }
+                    hitAPIs_1.fetchData(url, newOptions)
+                        .then(data => {
+                        resolve(data);
+                    })
+                        .catch(error => {
+                        console.log(error);
+                        reject(error);
+                    });
                 }
                 else
-                    reject({ error: true, details: "Some error occured. But it's not 401: Unauthorised. Good luck figuring out." });
+                    reject(data.error);
             }
             else
                 resolve(data);
