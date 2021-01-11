@@ -148,9 +148,10 @@ export class AlbumResolver {
         // console.log(data)
 
         const refinedData = data.items.map((item: any) => {
-            const { preview_url, name, id, images, artists, popularity, type, available_markets, duration_ms, uri, href, album } = item
+            const { preview_url, name, id, artists, popularity, type, available_markets, duration_ms, uri, href, album, images } = item
             const temp: TrackType = { 
-                preview_url, name, id, images, popularity, type, available_markets, duration_ms, uri, href, album,
+                preview_url, name, id, popularity, type, available_markets, duration_ms, uri, href, album,
+                images,
                 artistNames: artists.map((item: { name: string }) => item.name)
             }
 

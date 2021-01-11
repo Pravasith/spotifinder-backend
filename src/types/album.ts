@@ -32,7 +32,7 @@ export class AlbumType {
     @Field(() => [String])
     artistNames: string[]
 
-    @Field(() => [ArtistType])
+    @Field(() => [ArtistType], { nullable: true })
     artists?: ArtistType[]
 
     @Field()
@@ -41,7 +41,7 @@ export class AlbumType {
     @Field()
     href: string
 
-    @Field(() => [TrackType])
+    @Field(() => [TrackType]!, { nullable: true })
     tracks?: TrackType[]
 
 
