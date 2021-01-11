@@ -12,6 +12,8 @@ export const checkForTokenAndHitAPI = <T>(url: string, options: fetchOptions): P
         fetchData(url, options)
         .then(async data => {
 
+            // console.log(noOfTries)
+
             type DATA = {
                 error: { status: number } 
             }
@@ -45,6 +47,11 @@ export const checkForTokenAndHitAPI = <T>(url: string, options: fetchOptions): P
                     // HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!! HIGHLY DANGEROUS AREA!!!
 
                     if(noOfTries < 2){
+
+
+
+
+                        
                         noOfTries++
                         await checkForTokenAndHitAPI(url, newOptions)
                         .then((data) => { resolve(<T>data) })
@@ -58,7 +65,7 @@ export const checkForTokenAndHitAPI = <T>(url: string, options: fetchOptions): P
                     }
     
                     else{
-                        reject({ error: true, details : "Max tries exceeded, and boo hoo you are not authorized b*tch" })
+                        reject({ error: data, details : "Max tries exceeded, and boo hoo you are not authorized b*tch" })
                     }
                     
     
@@ -67,7 +74,7 @@ export const checkForTokenAndHitAPI = <T>(url: string, options: fetchOptions): P
     
                 }
 
-                else reject({ error: true, details : "Some error occured. But it's not 401: Unauthorised. Good luck figuring out." })
+                else reject({ error: data, details : "Some error occured. But it's not 401: Unauthorised. Good luck figuring out." })
             }
 
 

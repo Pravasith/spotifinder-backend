@@ -131,7 +131,7 @@ export class AlbumResolver {
         albumData: AlbumType
     ) {
 
-        const url = `https://api.spotify.com/v1/albums/${ albumData.id }/tracks`
+        const url = `https://api.spotify.com/v1/albums/${ albumData.id }/tracks?offset=0&limit=10`
 
 
         const accessToken = configs.spotify.getAccessToken()

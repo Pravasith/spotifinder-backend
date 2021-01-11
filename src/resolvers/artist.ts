@@ -102,8 +102,8 @@ export class ArtistResolver {
     async albums(@Root() artist: ArtistType) {
 
 
-        const url = `https://api.spotify.com/v1/artists/${ artist.id }/albums`
-        
+        const url = `https://api.spotify.com/v1/artists/${ artist.id }/albums?offset=0&limit=8`
+
 
         const accessToken = configs.spotify.getAccessToken()
 
@@ -121,11 +121,13 @@ export class ArtistResolver {
         const refinedData = data.items.map((item: any) => {
             const { name, id, images, artists, uri, href, album_type, copyrights, release_date } = item
 
+            // console.log(!!copyrights)
+
             const temp: AlbumType = {
                 id, name, images, uri, href, album_type, release_date,
                 copyrights: 
                     !!copyrights 
-                    ? 
+                    ?
                     copyrights[0].text
                     :
                     "None",
