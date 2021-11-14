@@ -1,200 +1,225 @@
-import { TrackType } from './../types/track'
-import { AlbumType } from './../types/album'
+import { TrackType } from "./../types/track";
+import { AlbumType } from "./../types/album";
 
-import { Arg, FieldResolver, Query, Resolver, Root } from "type-graphql"
+import { Arg, FieldResolver, Query, Resolver, Root } from "type-graphql";
 
-import { checkForTokenAndHitAPI } from './checkForTokenAndHitAPI'
-import { fetchOptions } from './../libs/hitAPIs'
-import configs from '../configs'
+import { checkForTokenAndHitAPI } from "./checkForTokenAndHitAPI";
+import { fetchOptions } from "./../libs/hitAPIs";
+import configs from "../configs";
 
-
-import { ArtistType } from './../types/artist'
-
-
-
-
+import { ArtistType } from "./../types/artist";
 
 @Resolver(() => ArtistType)
 export class ArtistResolver {
+  // QUERIES AND MUTATIONS
+  @Query(() => ArtistType)
+  async getArtist(
+    @Arg("artistId")
+    artistId: string
+  ) {
+    const url = `https://api.spotify.com/v1/artists/${artistId}`;
 
+    const accessToken = configs.spotify.getAccessToken();
 
-    
-    // QUERIES AND MUTATIONS 
+    const options: fetchOptions = {
+      method: "get",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Bearer " + accessToken,
+      },
+    };
 
-    @Query(() => ArtistType)
-    async getArtist (
-        @Arg("artistId")
-        artistId : string
-    ) {
+    const data: any = await checkForTokenAndHitAPI(url, options);
 
-        const url = `https://api.spotify.com/v1/artists/${ artistId }`
-        
+    const { id, name, followers, images, popularity, type, uri, href, genres } =
+      data;
 
-        const accessToken = configs.spotify.getAccessToken()
+    const refinedData: ArtistType = {
+      id,
+      name,
+      images,
+      popularity,
+      type,
+      uri,
+      href,
+      genres,
+      followers: followers.total,
+    };
 
-        const options: fetchOptions = {
-            method: 'get',
-            headers: { 
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Bearer ' + accessToken
-            }
-        }
+    return refinedData;
+  }
 
-        const data: any = await checkForTokenAndHitAPI(url, options)
-        // console.log(data)
+  @Query(() => [ArtistType])
+  async getRelatedArtists(
+    @Arg("artistId")
+    artistId: string
+  ) {
+    const url = `https://api.spotify.com/v1/artists/${artistId}/related-artists`;
 
-        const { id, name, followers, images, popularity, type, uri, href, genres } = data
+    const accessToken = configs.spotify.getAccessToken();
 
+    const options: fetchOptions = {
+      method: "get",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Bearer " + accessToken,
+      },
+    };
 
+    const data: any = await checkForTokenAndHitAPI(url, options);
 
-        const refinedData: ArtistType = {
-            id, name, images, popularity, type, uri, href, genres,
-            followers: followers.total
-        }
+    const refinedData = data.artists.map((item: any) => {
+      const {
+        id,
+        name,
+        images,
+        popularity,
+        type,
+        uri,
+        href,
+        genres,
+        followers,
+      } = item;
+      const temp: ArtistType = {
+        id,
+        name,
+        images,
+        popularity,
+        type,
+        uri,
+        href,
+        genres,
+        followers: followers.total,
+      };
 
-        return refinedData
+      return temp;
+    });
 
-    }
+    return refinedData;
+  }
 
-    @Query(() => [ArtistType])
-    async getRelatedArtists (
-        @Arg("artistId")
-        artistId : string
-    ) {
+  // FIELD RESOLVERS
+  @FieldResolver(() => [AlbumType])
+  async albums(@Root() artist: ArtistType) {
+    const url = `https://api.spotify.com/v1/artists/${artist.id}/albums?offset=0&limit=10`;
 
-        const url = `https://api.spotify.com/v1/artists/${ artistId }/related-artists`
-        
+    const accessToken = configs.spotify.getAccessToken();
 
-        const accessToken = configs.spotify.getAccessToken()
+    const options: fetchOptions = {
+      method: "get",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Bearer " + accessToken,
+      },
+    };
 
-        const options: fetchOptions = {
-            method: 'get',
-            headers: { 
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Bearer ' + accessToken
-            }
-        }
+    const data: any = await checkForTokenAndHitAPI(url, options);
 
-        const data: any = await checkForTokenAndHitAPI(url, options)
-        // console.log(data)
+    const artistAlbumIds = data.items.map((item: { id: string }) => {
+      const { id } = item;
 
+      return id;
+    });
 
-        const refinedData = data.artists.map((item: any) => {
-            const { id, name, images, popularity, type, uri, href, genres, followers } = item
-            const temp: ArtistType = {
-                id, name, images, popularity, type, uri, href, genres,
-                followers: followers.total
-            }
+    const url2 = `https://api.spotify.com/v1/albums/?ids=${artistAlbumIds.join()}`;
 
-            return temp
-        })
+    const newData: any = await checkForTokenAndHitAPI(url2, options);
 
-        return refinedData
+    const refinedData = newData.albums.map((item: any) => {
+      const {
+        name,
+        id,
+        images,
+        artists,
+        uri,
+        href,
+        album_type,
+        release_date,
+        tracks,
+      } = item;
 
-    }
+      const temp: AlbumType = {
+        id,
+        name,
+        images,
+        uri,
+        href,
+        album_type,
+        release_date,
 
+        artistNames: artists.map((item: { name: string }) => item.name),
+        artists: artists.map((item: any) => {
+          return {
+            name: item.name,
+            href: item.href,
+            id: item.id,
+            type: item.type,
+            uri: item.uri,
+          };
+        }),
+        tracks: tracks.items,
+      };
 
+      return temp;
+    });
 
+    return refinedData;
+  }
 
-    // FIELD RESOLVERS
+  @FieldResolver(() => [TrackType])
+  async popularTracks(
+    @Root()
+    artist: ArtistType,
 
-    @FieldResolver(() => [AlbumType])
-    async albums(@Root() artist: ArtistType) {
+    @Arg("country", { defaultValue: "US" })
+    country: string
+  ) {
+    const url = `https://api.spotify.com/v1/artists/${artist.id}/top-tracks?country=${country}`;
 
+    const accessToken = configs.spotify.getAccessToken();
 
-        const url = `https://api.spotify.com/v1/artists/${ artist.id }/albums?offset=0&limit=10`
+    const options: fetchOptions = {
+      method: "get",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Bearer " + accessToken,
+      },
+    };
 
+    const data: any = await checkForTokenAndHitAPI(url, options);
 
-        const accessToken = configs.spotify.getAccessToken()
+    const refinedData = data.tracks.map((item: any) => {
+      const {
+        preview_url,
+        name,
+        id,
+        artists,
+        popularity,
+        type,
+        available_markets,
+        duration_ms,
+        uri,
+        href,
+        album,
+      } = item;
+      const temp: TrackType = {
+        preview_url,
+        name,
+        id,
+        popularity,
+        type,
+        available_markets,
+        duration_ms,
+        uri,
+        href,
+        album,
+        images: album.images,
+        artistNames: artists.map((item: { name: string }) => item.name),
+      };
 
-        const options: fetchOptions = {
-            method: 'get',
-            headers: { 
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Bearer ' + accessToken
-            }
-        }
+      return temp;
+    });
 
-        const data: any = await checkForTokenAndHitAPI(url, options)
-        // console.log("ALBUMS::::::::::", data)
-
-        const artistAlbumIds = data.items.map((item: { id: string }) => {
-            const { id } = item
-
-            return id
-        })
-
-
-        // console.log(artistAlbumIds.join())
-
-        const url2 = `https://api.spotify.com/v1/albums/?ids=${ artistAlbumIds.join() }`
-
-        const newData: any = await checkForTokenAndHitAPI(url2, options)
-
-        const refinedData = newData.albums.map((item:any) => {
-            const { name, id, images, artists, uri, href, album_type, release_date, tracks } = item
-
-            // console.log(tracks)
-
-            const temp: AlbumType = {
-                id, name, images, uri, href, album_type, release_date, 
-
-                artistNames: artists.map((item: { name: string }) => item.name),
-                artists: artists.map((item: any) => {
-                    return {
-                        name: item.name,
-                        href: item.href,
-                        id: item.id,
-                        type: item.type,
-                        uri: item.uri,
-                    }
-                }),
-                tracks: tracks.items
-            }
-
-            return temp
-        })
-
-        return refinedData
-    }
-
-
-    @FieldResolver(() => [TrackType])
-    async popularTracks(
-        @Root() 
-        artist: ArtistType,
-
-        @Arg('country', { defaultValue: 'US' })
-        country: string
-    ) {
-
-        const url = `https://api.spotify.com/v1/artists/${ artist.id }/top-tracks?country=${ country }`
-
-
-        const accessToken = configs.spotify.getAccessToken()
-
-        const options: fetchOptions = {
-            method: 'get',
-            headers: { 
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Bearer ' + accessToken
-            }
-        }
-
-        const data: any = await checkForTokenAndHitAPI(url, options)
-        // console.log(data)
-
-        const refinedData = data.tracks.map((item: any) => {
-            const { preview_url, name, id, artists, popularity, type, available_markets, duration_ms, uri, href, album, } = item
-            const temp: TrackType = { 
-                preview_url, name, id, popularity, type, available_markets, duration_ms, uri, href, album,
-                images: album.images,
-                artistNames: artists.map((item: { name: string }) => item.name)
-            }
-
-            return temp
-        })
-
-        return refinedData
-    }
-} 
+    return refinedData;
+  }
+}

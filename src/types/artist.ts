@@ -1,43 +1,36 @@
 // import { AlbumType } from './album';
-import { Image } from './image'
+import { Image } from "./image";
 
-import { Field, ID, Int, ObjectType } from 'type-graphql'
-
-
-
+import { Field, ID, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class ArtistType {
+  // Required //
+  @Field(() => ID)
+  id: string;
 
+  @Field()
+  name: string;
 
-    // Required //
-    @Field(() => ID)
-    id: string
+  @Field(() => Int)
+  followers: number;
 
-    @Field()
-    name: string
+  @Field(() => [Image])
+  images: Image[];
 
-    @Field(() => Int)
-    followers: number
+  // Optional
+  @Field(() => Int)
+  popularity: number;
 
-    @Field(() => [Image])
-    images: Image[]
+  @Field()
+  type: string;
 
+  @Field()
+  uri: string;
 
-    // Optional
-    @Field(() => Int)
-    popularity: number
+  @Field()
+  href: string;
 
-    @Field()
-    type: string
-
-    @Field()
-    uri: string
-
-    @Field()
-    href: string
-
-    @Field(() => [String])
-    genres: string[]
-
+  @Field(() => [String])
+  genres: string[];
 }
