@@ -5,38 +5,38 @@ import { Field, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class AlbumType {
-  // Required
-  @Field()
-  name: string;
+    // Required
+    @Field()
+    name: string;
 
-  @Field()
-  id: string;
+    @Field()
+    id: string;
 
-  @Field(() => [Image])
-  images: Image[];
+    @Field(() => [Image])
+    images: Image[];
 
-  @Field()
-  album_type: string;
+    @Field()
+    album_type: string;
 
-  @Field()
-  copyrights?: string;
+    @Field()
+    copyrights?: string;
 
-  @Field()
-  release_date: string;
+    @Field()
+    release_date: string;
 
-  // Optional
-  @Field(() => [String])
-  artistNames: string[];
+    // Optional
+    @Field(() => [String])
+    artistNames: string[];
 
-  @Field(() => [ArtistType], { nullable: true })
-  artists?: ArtistType[];
+    @Field(() => [ArtistType], { nullable: true })
+    artists?: ArtistType[];
 
-  @Field()
-  uri: string;
+    @Field()
+    uri: string;
 
-  @Field()
-  href: string;
+    @Field()
+    href: string;
 
-  @Field(() => [TrackType]!, { nullable: true })
-  tracks?: TrackType[];
+    @Field(() => [TrackType]!, { nullable: true })
+    tracks?: TrackType[];
 }
