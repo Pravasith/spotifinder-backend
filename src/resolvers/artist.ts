@@ -1,13 +1,13 @@
-import { TrackType } from "./../types/track";
-import { AlbumType } from "./../types/album";
+import { TrackType } from "./../types/track"
+import { AlbumType } from "./../types/album"
 
-import { Arg, FieldResolver, Query, Resolver, Root } from "type-graphql";
+import { Arg, FieldResolver, Query, Resolver, Root } from "type-graphql"
 
-import { checkForTokenAndHitAPI } from "./checkForTokenAndHitAPI";
-import { fetchOptions } from "./../libs/hitAPIs";
-import configs from "../configs";
+import { checkForTokenAndHitAPI } from "./checkForTokenAndHitAPI"
+import { fetchOptions } from "./../libs/hitAPIs"
+import configs from "../configs"
 
-import { ArtistType } from "./../types/artist";
+import { ArtistType } from "./../types/artist"
 
 @Resolver(() => ArtistType)
 export class ArtistResolver {
@@ -17,9 +17,9 @@ export class ArtistResolver {
         @Arg("artistId")
         artistId: string
     ) {
-        const url = `https://api.spotify.com/v1/artists/${artistId}`;
+        const url = `https://api.spotify.com/v1/artists/${artistId}`
 
-        const accessToken = configs.spotify.getAccessToken();
+        const accessToken = configs.spotify.getAccessToken()
 
         const options: fetchOptions = {
             method: "get",
@@ -27,9 +27,9 @@ export class ArtistResolver {
                 "Content-Type": "application/x-www-form-urlencoded",
                 Authorization: "Bearer " + accessToken,
             },
-        };
+        }
 
-        const data: any = await checkForTokenAndHitAPI(url, options);
+        const data: any = await checkForTokenAndHitAPI(url, options)
 
         const {
             id,
@@ -41,7 +41,7 @@ export class ArtistResolver {
             uri,
             href,
             genres,
-        } = data;
+        } = data
 
         const refinedData: ArtistType = {
             id,
@@ -53,9 +53,9 @@ export class ArtistResolver {
             href,
             genres,
             followers: followers.total,
-        };
+        }
 
-        return refinedData;
+        return refinedData
     }
 
     @Query(() => [ArtistType])
@@ -63,9 +63,9 @@ export class ArtistResolver {
         @Arg("artistId")
         artistId: string
     ) {
-        const url = `https://api.spotify.com/v1/artists/${artistId}/related-artists`;
+        const url = `https://api.spotify.com/v1/artists/${artistId}/related-artists`
 
-        const accessToken = configs.spotify.getAccessToken();
+        const accessToken = configs.spotify.getAccessToken()
 
         const options: fetchOptions = {
             method: "get",
@@ -73,9 +73,9 @@ export class ArtistResolver {
                 "Content-Type": "application/x-www-form-urlencoded",
                 Authorization: "Bearer " + accessToken,
             },
-        };
+        }
 
-        const data: any = await checkForTokenAndHitAPI(url, options);
+        const data: any = await checkForTokenAndHitAPI(url, options)
 
         const refinedData = data.artists.map((item: any) => {
             const {
@@ -88,7 +88,7 @@ export class ArtistResolver {
                 href,
                 genres,
                 followers,
-            } = item;
+            } = item
             const temp: ArtistType = {
                 id,
                 name,
@@ -99,20 +99,20 @@ export class ArtistResolver {
                 href,
                 genres,
                 followers: followers.total,
-            };
+            }
 
-            return temp;
-        });
+            return temp
+        })
 
-        return refinedData;
+        return refinedData
     }
 
     // FIELD RESOLVERS
     @FieldResolver(() => [AlbumType])
     async albums(@Root() artist: ArtistType) {
-        const url = `https://api.spotify.com/v1/artists/${artist.id}/albums?offset=0&limit=10`;
+        const url = `https://api.spotify.com/v1/artists/${artist.id}/albums?offset=0&limit=10`
 
-        const accessToken = configs.spotify.getAccessToken();
+        const accessToken = configs.spotify.getAccessToken()
 
         const options: fetchOptions = {
             method: "get",
@@ -120,19 +120,19 @@ export class ArtistResolver {
                 "Content-Type": "application/x-www-form-urlencoded",
                 Authorization: "Bearer " + accessToken,
             },
-        };
+        }
 
-        const data: any = await checkForTokenAndHitAPI(url, options);
+        const data: any = await checkForTokenAndHitAPI(url, options)
 
         const artistAlbumIds = data.items.map((item: { id: string }) => {
-            const { id } = item;
+            const { id } = item
 
-            return id;
-        });
+            return id
+        })
 
-        const url2 = `https://api.spotify.com/v1/albums/?ids=${artistAlbumIds.join()}`;
+        const url2 = `https://api.spotify.com/v1/albums/?ids=${artistAlbumIds.join()}`
 
-        const newData: any = await checkForTokenAndHitAPI(url2, options);
+        const newData: any = await checkForTokenAndHitAPI(url2, options)
 
         const refinedData = newData.albums.map((item: any) => {
             const {
@@ -145,7 +145,7 @@ export class ArtistResolver {
                 album_type,
                 release_date,
                 tracks,
-            } = item;
+            } = item
 
             const temp: AlbumType = {
                 id,
@@ -164,15 +164,15 @@ export class ArtistResolver {
                         id: item.id,
                         type: item.type,
                         uri: item.uri,
-                    };
+                    }
                 }),
                 tracks: tracks.items,
-            };
+            }
 
-            return temp;
-        });
+            return temp
+        })
 
-        return refinedData;
+        return refinedData
     }
 
     @FieldResolver(() => [TrackType])
@@ -183,9 +183,9 @@ export class ArtistResolver {
         @Arg("country", { defaultValue: "US" })
         country: string
     ) {
-        const url = `https://api.spotify.com/v1/artists/${artist.id}/top-tracks?country=${country}`;
+        const url = `https://api.spotify.com/v1/artists/${artist.id}/top-tracks?country=${country}`
 
-        const accessToken = configs.spotify.getAccessToken();
+        const accessToken = configs.spotify.getAccessToken()
 
         const options: fetchOptions = {
             method: "get",
@@ -193,9 +193,9 @@ export class ArtistResolver {
                 "Content-Type": "application/x-www-form-urlencoded",
                 Authorization: "Bearer " + accessToken,
             },
-        };
+        }
 
-        const data: any = await checkForTokenAndHitAPI(url, options);
+        const data: any = await checkForTokenAndHitAPI(url, options)
 
         const refinedData = data.tracks.map((item: any) => {
             const {
@@ -210,7 +210,7 @@ export class ArtistResolver {
                 uri,
                 href,
                 album,
-            } = item;
+            } = item
             const temp: TrackType = {
                 preview_url,
                 name,
@@ -224,11 +224,11 @@ export class ArtistResolver {
                 album,
                 images: album.images,
                 artistNames: artists.map((item: { name: string }) => item.name),
-            };
+            }
 
-            return temp;
-        });
+            return temp
+        })
 
-        return refinedData;
+        return refinedData
     }
 }

@@ -1,45 +1,45 @@
-import { AlbumType } from "./album";
+import { AlbumType } from "./album"
 
-import { Image } from "./image";
-import { Field, Int, ObjectType, ID } from "type-graphql";
+import { Image } from "./image"
+import { Field, Int, ObjectType, ID } from "type-graphql"
 
 @ObjectType()
 export class TrackType {
     // Required
     @Field(() => String, { nullable: true })
-    preview_url: string;
+    preview_url: string
 
     @Field()
-    name: string;
+    name: string
 
     @Field(() => ID) // type = graphqlID
-    id: string;
+    id: string
 
     @Field(() => [Image!]!)
-    images: Image[];
+    images: Image[]
 
     @Field(() => AlbumType)
-    album: AlbumType;
+    album: AlbumType
 
     @Field(() => [String])
-    artistNames: string[];
+    artistNames: string[]
 
     // Optional
     @Field(() => Int)
-    popularity: number;
+    popularity: number
 
     @Field()
-    type: string;
+    type: string
 
     @Field(() => [String])
-    available_markets: string[];
+    available_markets: string[]
 
     @Field(() => Int)
-    duration_ms: number;
+    duration_ms: number
 
     @Field()
-    uri: string;
+    uri: string
 
     @Field()
-    href: string;
+    href: string
 }

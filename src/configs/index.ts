@@ -1,5 +1,5 @@
-import { config } from "dotenv";
-config();
+import { config } from "dotenv"
+config()
 
 export default {
     spotify: {
@@ -8,10 +8,10 @@ export default {
         encodedID_Secret: process.env.SPOTIFY_ENCODED_ID_SECRET,
         accessToken: process.env.SPOTIFY_ACCESS_TOKEN,
         setAccessToken(accessToken: string) {
-            this.accessToken = accessToken;
+            this.accessToken = accessToken
         },
         getAccessToken() {
-            return this.accessToken;
+            return this.accessToken
         },
     },
-};
+}

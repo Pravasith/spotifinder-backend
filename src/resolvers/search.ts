@@ -1,11 +1,11 @@
-import configs from "../configs";
+import configs from "../configs"
 
-import { fetchOptions } from "./../libs/hitAPIs";
+import { fetchOptions } from "./../libs/hitAPIs"
 
-import { SearchType } from "./../types/search";
-import { Args, Query, Resolver } from "type-graphql";
-import { GetSearchArgs } from "./../args/search";
-import { checkForTokenAndHitAPI } from "./checkForTokenAndHitAPI";
+import { SearchType } from "./../types/search"
+import { Args, Query, Resolver } from "type-graphql"
+import { GetSearchArgs } from "./../args/search"
+import { checkForTokenAndHitAPI } from "./checkForTokenAndHitAPI"
 
 @Resolver()
 export class SearchResolver {
@@ -13,9 +13,9 @@ export class SearchResolver {
     async search(
         @Args() { searchQuery, searchFilter, limit }: GetSearchArgs
     ): Promise<SearchType> {
-        const url = `https://api.spotify.com/v1/search?q=${searchQuery}&type=${searchFilter.join()}&limit=${limit}`;
+        const url = `https://api.spotify.com/v1/search?q=${searchQuery}&type=${searchFilter.join()}&limit=${limit}`
 
-        const accessToken = configs.spotify.getAccessToken();
+        const accessToken = configs.spotify.getAccessToken()
 
         const options: fetchOptions = {
             method: "get",
@@ -23,14 +23,14 @@ export class SearchResolver {
                 "Content-Type": "application/x-www-form-urlencoded",
                 Authorization: "Bearer " + accessToken,
             },
-        };
+        }
 
-        const data: any = await checkForTokenAndHitAPI(url, options);
-        const { albums, artists, tracks } = data; // Spotify data structure
+        const data: any = await checkForTokenAndHitAPI(url, options)
+        const { albums, artists, tracks } = data // Spotify data structure
 
         const refinedData = {
             albums: albums.items.map((item: any) => {
-                const { name, id, images, artists, uri, href } = item;
+                const { name, id, images, artists, uri, href } = item
                 return {
                     name,
                     id,
@@ -40,7 +40,7 @@ export class SearchResolver {
                     artistNames: artists.map(
                         (artist: { name: string }) => artist.name
                     ),
-                };
+                }
             }),
 
             artists: artists.items.map((item: any) => {
@@ -54,7 +54,7 @@ export class SearchResolver {
                     uri,
                     href,
                     genres,
-                } = item;
+                } = item
                 return {
                     id,
                     name,
@@ -65,7 +65,7 @@ export class SearchResolver {
                     uri,
                     href,
                     genres,
-                };
+                }
             }),
 
             tracks: tracks.items.map((item: any) => {
@@ -81,7 +81,7 @@ export class SearchResolver {
                     duration_ms,
                     uri,
                     href,
-                } = item;
+                } = item
 
                 return {
                     preview_url,
@@ -97,10 +97,10 @@ export class SearchResolver {
                         (artist: { name: string }) => artist.name
                     ),
                     images: album.images,
-                };
+                }
             }),
-        };
+        }
 
-        return refinedData;
+        return refinedData
     }
 }

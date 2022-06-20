@@ -1,13 +1,13 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql"
 
 @ObjectType()
 export class Image {
     @Field()
-    height: number;
+    height: number
 
     @Field()
-    width: number;
+    width: number
 
     @Field()
-    url: string;
+    url: string
 }

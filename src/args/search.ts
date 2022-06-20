@@ -1,5 +1,5 @@
-import { Max, Min } from "class-validator";
-import { ArgsType, Field, Int } from "type-graphql";
+import { Max, Min } from "class-validator"
+import { ArgsType, Field, Int } from "type-graphql"
 
 enum SearchFilters {
     track = "track",
@@ -10,13 +10,13 @@ enum SearchFilters {
 @ArgsType()
 export class GetSearchArgs {
     @Field()
-    searchQuery: string;
+    searchQuery: string
 
     @Field(() => [String])
-    searchFilter: SearchFilters[];
+    searchFilter: SearchFilters[]
 
     @Field(() => Int)
     @Min(1)
     @Max(50)
-    limit: number;
+    limit: number
 }

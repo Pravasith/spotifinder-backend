@@ -1,5 +1,5 @@
-import { fetchOptions, fetchData } from "../libs/hitAPIs";
-import configs from "../configs";
+import { fetchOptions, fetchData } from "../libs/hitAPIs"
+import configs from "../configs"
 import {
     GraphQLID,
     GraphQLInt,
@@ -7,9 +7,9 @@ import {
     GraphQLObjectType,
     GraphQLSchema,
     GraphQLString,
-} from "graphql";
+} from "graphql"
 
-const { accessToken } = configs.spotify;
+const { accessToken } = configs.spotify
 
 export const searchData = <T>(
     url: string,
@@ -19,11 +19,11 @@ export const searchData = <T>(
         fetchData(url, options)
             .then(data => resolve(data as Promise<T>))
             .catch(err => {
-                console.error(err);
-                reject(err);
-            });
-    });
-};
+                console.error(err)
+                reject(err)
+            })
+    })
+}
 
 const ImageType = new GraphQLObjectType({
     name: "Image",
@@ -32,7 +32,7 @@ const ImageType = new GraphQLObjectType({
         width: { type: GraphQLInt },
         url: { type: GraphQLString },
     },
-});
+})
 
 const TrackType = new GraphQLObjectType({
     name: "Track",
@@ -63,7 +63,7 @@ const TrackType = new GraphQLObjectType({
         uri: { type: GraphQLString },
         href: { type: GraphQLString },
     }),
-});
+})
 
 const SearchResultType = new GraphQLObjectType({
     name: "SearchQueryResponse",
@@ -74,8 +74,7 @@ const SearchResultType = new GraphQLObjectType({
         tracks: {
             type: new GraphQLList(TrackType),
             resolve: (root: any) => {
-                console.log(root);
-                return root;
+                return root
             },
         },
         // albums: {
@@ -85,7 +84,7 @@ const SearchResultType = new GraphQLObjectType({
         //     type: new GraphQLList(ArtistType)
         // }
     }),
-});
+})
 
 export default new GraphQLSchema({
     query: new GraphQLObjectType({
@@ -102,18 +101,18 @@ export default new GraphQLSchema({
                     },
                 },
                 resolve: async (root, args) => {
-                    const url = `https://api.spotify.com/v1/search?q=${args.query}&type=track&limit=2`;
+                    const url = `https://api.spotify.com/v1/search?q=${args.query}&type=track&limit=2`
                     const options: fetchOptions = {
                         method: "get",
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
                             Authorization: "Bearer " + accessToken,
                         },
-                    };
+                    }
 
-                    const data: any = await searchData(url, options);
+                    const data: any = await searchData(url, options)
 
-                    let tracks = data.tracks.items;
+                    let tracks = data.tracks.items
 
                     tracks = tracks.map((item: any) => {
                         const {
@@ -128,7 +127,7 @@ export default new GraphQLSchema({
                             duration_ms,
                             uri,
                             href,
-                        } = item;
+                        } = item
 
                         return {
                             album: {
@@ -153,15 +152,13 @@ export default new GraphQLSchema({
                             duration_ms,
                             uri,
                             href,
-                        };
-                    });
+                        }
+                    })
 
-                    console.log(tracks);
-
-                    root;
-                    return [tracks];
+                    root
+                    return [tracks]
                 },
             },
         },
     }),
-});
+})
